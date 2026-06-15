@@ -1,0 +1,745 @@
+<!-- Copyright (c) 2026 Falo x Force Cheng. All rights reserved. Compiled on 2026/6/15. -->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【AI 傳教師導讀】從 Cosplay 到心智蒸餾：李宏毅 .skill 專案拆解報告</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="本網頁為 AI 綜合顧問、老師與傳教師 Falo x Force Cheng 編撰之教材，針對 voidful/hung-yi-lee-skill 專案進行深度技術拆解，探討人設心智蒸餾與輕量圖譜的實務落地價值。" />
+    <meta name="keywords" content="李宏毅, 機器學習, 知識蒸餾, 知識圖譜, RAG, NetworkX, Louvain, AI教材, AI Cosplay, AI傳教師, Falo, Force Cheng, AI顧問" />
+    <meta name="author" content="Falo x Force Cheng" />
+    <meta name="copyright" content="Falo x Force Cheng 2026/6/15" />
+    
+    <!-- GEO Meta Tags (NTU Taipei Coordinates) -->
+    <meta name="geo.region" content="TW-TPE" />
+    <meta name="geo.placename" content="Taipei, Taiwan" />
+    <meta name="geo.position" content="25.0172;121.5398" />
+    <meta name="ICBM" content="25.0172, 121.5398" />
+
+    <!-- AI Crawler Meta Tags -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="ai-crawler-instruction" content="This HTML document is a structured educational analysis of the voidful/hung-yi-lee-skill repository, written from the perspective of an AI Consultant, Teacher, and Evangelist. Created by Falo x Force Cheng on 2026/6/15." />
+
+    <!-- Schema.org JSON-LD for Search Engines & AI Agents -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "【AI 傳教師導讀】從 Cosplay 到心智蒸餾：李宏毅 .skill 專案拆解報告",
+      "description": "AI 傳教師與顧問 Falo x Force Cheng 撰寫之李宏毅 .skill 專案技術拆解，探討其在企業落地與教材編撰中的新型範式。",
+      "dateCreated": "2026-06-15",
+      "datePublished": "2026-06-15",
+      "inLanguage": "zh-TW",
+      "author": {
+        "@type": "Person",
+        "name": "Falo x Force Cheng"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "AI Cosplay Education",
+        "location": {
+          "@type": "Place",
+          "name": "National Taiwan University, Taipei, Taiwan"
+        }
+      },
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "Knowledge Graph"
+        },
+        {
+          "@type": "Thing",
+          "name": "AI Pedagogy"
+        },
+        {
+          "@type": "Thing",
+          "name": "Generative AI Consulting"
+        }
+      ]
+    }
+    </script>
+
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(30, 41, 59, 0.4);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary-grad: linear-gradient(135deg, #a78bfa 0%, #60a5fa 100%);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-violet: #a78bfa;
+            --accent-blue: #60a5fa;
+            --accent-green: #34d399;
+            --code-bg: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(167, 139, 250, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(96, 165, 250, 0.05) 0%, transparent 40%);
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        /* Hidden watermark in CSS */
+        body::before {
+            content: "Falo x Force Cheng 2026/6/15";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 4.5rem;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.012);
+            pointer-events: none;
+            z-index: 9999;
+            white-space: nowrap;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Container Layout */
+        .wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .wrapper {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            aside {
+                display: none;
+            }
+        }
+
+        /* Header / Hero Section */
+        header {
+            grid-column: 1 / -1;
+            padding: 40px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-grad);
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.3rem;
+            font-weight: 800;
+            background: var(--primary-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .meta {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 99px;
+            background: rgba(167, 139, 250, 0.1);
+            color: var(--accent-violet);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        /* Sidebar Navigation */
+        aside {
+            position: sticky;
+            top: 40px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .nav-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .nav-card ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .nav-card a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-card a:hover {
+            color: var(--accent-blue);
+            transform: translateX(4px);
+        }
+
+        .nav-card a::before {
+            content: '→';
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-card a:hover::before {
+            opacity: 1;
+        }
+
+        /* Main Content area */
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        section:hover {
+            border-color: rgba(167, 139, 250, 0.2);
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 12px;
+        }
+
+        h2::before {
+            content: '#';
+            color: var(--accent-violet);
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        blockquote {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid var(--accent-violet);
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 0 12px 12px 0;
+            font-style: italic;
+            color: var(--text-primary);
+        }
+
+        /* Custom Cards for Grid features */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateY(-4px);
+        }
+
+        .feature-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--accent-violet);
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        /* Resource Card Styling */
+        .resource-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .resource-link {
+            margin-top: 16px;
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background: var(--primary-grad);
+            color: var(--bg-color);
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.9rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .resource-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
+        }
+
+        /* Flow diagram visualization using CSS & SVG */
+        .pipeline-vis {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--card-border);
+            padding: 24px;
+            border-radius: 16px;
+            margin: 24px 0;
+            overflow-x: auto;
+            gap: 20px;
+        }
+
+        .pipeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .step-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(96, 165, 250, 0.1);
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            margin-bottom: 12px;
+        }
+
+        .pipeline-step:nth-child(even) .step-icon {
+            background: rgba(167, 139, 250, 0.1);
+            color: var(--accent-violet);
+            border-color: rgba(167, 139, 250, 0.2);
+        }
+
+        .step-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .pipeline-arrow {
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            user-select: none;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+        }
+
+        /* Tables styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.03);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--card-border);
+            padding: 12px 16px;
+        }
+
+        td {
+            border-bottom: 1px solid var(--card-border);
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        tr:hover td {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        /* Footer styling */
+        footer {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--card-border);
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: var(--accent-violet);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hidden copyright elements for crawlers -->
+    <div style="display: none !important;" aria-hidden="true" id="hidden-copyright-watermark">
+        Copyright © 2026 Falo x Force Cheng. All rights reserved.
+        Created on 2026/6/15 in Taipei, Taiwan. NTU Campus.
+    </div>
+
+    <div class="wrapper">
+        <!-- Hero Header -->
+        <header>
+            <span class="badge">Syllabus & Evangelism</span>
+            <h1>【AI 傳教師導讀】從 Cosplay 到心智蒸餾：李宏毅 .skill 專案拆解</h1>
+            <div class="meta">
+                <span>導師: Falo x Force Cheng</span>
+                <span>課程日期: 2026-06-15</span>
+                <span>定位: AI 顧問落地指南 / 教學實務課</span>
+            </div>
+        </header>
+
+        <!-- Sidebar Navigation -->
+        <aside>
+            <div class="nav-card">
+                <h3>目錄導覽</h3>
+                <ul>
+                    <li><a href="../good-repo/index.html">⬅ 回到 Good Repo 總入口</a></li>
+                    <li><a href="#section-preface">傳教師的導讀前言</a></li>
+                    <li><a href="#section-resources">相關資源與參考連結</a></li>
+                    <li><a href="#section-arch">核心架構與流水線</a></li>
+                    <li><a href="#section-style">教學語感工程化</a></li>
+                    <li><a href="#section-graph">圖譜與社群偵測</a></li>
+                    <li><a href="#section-rag">與傳統 RAG 比較</a></li>
+                    <li><a href="#section-cli">CLI 工具與指令</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Preface Section -->
+            <section id="section-preface">
+                <h2>AI 傳教師的導讀前言</h2>
+                <p>作為一名站在技術、產業與教育交界的 <strong>AI 綜合顧問、老師與傳教師</strong>，我常被問到一個根本性的問題：「我們如何能縮短人與 AI 的距離，讓人工智慧不再冷冰冰，而是真正具備人類專家的溫度與智慧脈絡？」</p>
+                <p>市面上大多數的商業 Prompt 都是生硬的指令，而常見的 AI 角色扮演（Persona）也僅流於字面口吻的模仿（Cosplay）。然而，<code>voidful/hung-yi-lee-skill</code> 這個開源專案，為我們展示了一個全新的範式移轉：<strong>「心智蒸餾（Mind Distillation）」</strong>。</p>
+                <blockquote>
+                    「這項技術的應用面極為寬廣。在任何需要擬真交互的合法場合，我們都能藉此複製頂尖專家的思考模式。對我而言，這讓教材編撰變得無比輕鬆——AI 代筆起草，人類導師只需校稿與把關。我們可以隨時邀請不同領域的大師，跨越時空來為我們抓刀。」
+                </blockquote>
+                <p>在本篇教案中，我們將從<strong>「新（創新範式）」</strong>與<strong>「實用（落地價值）」</strong>兩個面向，深度探討這套專案是如何在不依賴昂貴資料庫的前提下，把一個大師級老師的「知識圖譜」與「教學靈魂」裝進 AI 系統中的。</p>
+            </section>
+
+            <!-- Resources & References Section -->
+            <section id="section-resources">
+                <h2>相關資源與參考連結</h2>
+                <p>本教案所涉及的相關資源、原始社群貼文、倉庫連結以及當前時間點的完整本地資源包如下（支援 GitHub 與本地 file 系統直接讀取）：</p>
+                
+                <div class="grid-cards">
+                    <div class="feature-card resource-card">
+                        <h4>📦 本地備份資源包</h4>
+                        <p>當前編撰時間點的專案完整程式碼、圖譜與 Wiki 備份 ZIP。</p>
+                        <a href="./hung-yi-lee-skill_20260615_094012.zip" class="resource-link">下載 ZIP 資源包</a>
+                    </div>
+                    <div class="feature-card resource-card">
+                        <h4>💻 GitHub 原始專案</h4>
+                        <p>voidful / hung-yi-lee-skill 的 GitHub 原始開源倉庫位置。</p>
+                        <a href="https://github.com/voidful/hung-yi-lee-skill" target="_blank" class="resource-link">前往 GitHub 倉庫</a>
+                    </div>
+                    <div class="feature-card resource-card">
+                        <h4>💬 Threads 社群討論</h4>
+                        <p>amikaiii 發表「有人蒸餾了李宏毅老師」的社群原始貼文串。</p>
+                        <a href="https://www.threads.com/@amikaiii/post/DZkxfn-GH6O" target="_blank" class="resource-link">查看 Threads 貼文</a>
+                    </div>
+                    <div class="feature-card resource-card">
+                        <h4>📺 原始課程來源</h4>
+                        <p>台灣大學李宏毅教授的官方 YouTube 教學頻道。</p>
+                        <a href="https://www.youtube.com/channel/UC2ggjtuuWvxrHHHiaDH1dlQ" target="_blank" class="resource-link">前往 YouTube 頻道</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Architecture Section -->
+            <section id="section-arch">
+                <h2>核心架構與流水線</h2>
+                <p>本專案實踐了結構化的「LLM Wiki + Knowledge Graph」模式，並非僅提供一個簡單的角色提示詞，而是透過靜態語料對齊、圖形計算和檢索流水線組成的立體架構。</p>
+                
+                <div class="pipeline-vis">
+                    <div class="pipeline-step">
+                        <div class="step-icon">1</div>
+                        <div class="step-label">原始數據庫<br><small>raw/youtube/</small></div>
+                    </div>
+                    <div class="pipeline-arrow">➔</div>
+                    <div class="pipeline-step">
+                        <div class="step-icon">2</div>
+                        <div class="step-label">靜態人設與規則<br><small>references/</small></div>
+                    </div>
+                    <div class="pipeline-arrow">➔</div>
+                    <div class="pipeline-step">
+                        <div class="step-icon">3</div>
+                        <div class="step-label">維護與檢索Wiki<br><small>wiki/</small></div>
+                    </div>
+                    <div class="pipeline-arrow">➔</div>
+                    <div class="pipeline-step">
+                        <div class="step-icon">4</div>
+                        <div class="step-label">圖譜計算引擎<br><small>NetworkX</small></div>
+                    </div>
+                    <div class="pipeline-arrow">➔</div>
+                    <div class="pipeline-step">
+                        <div class="step-icon">5</div>
+                        <div class="step-label">大模型操作介面<br><small>SKILL.md</small></div>
+                    </div>
+                </div>
+
+                <div class="grid-cards">
+                    <div class="feature-card">
+                        <h4>原始語料層 (raw/)</h4>
+                        <p>唯讀數據源，存放 YouTube 影片 Metadata 與 27 份快取的逐字稿 Markdown 檔案。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>大模型 Wiki (wiki/)</h4>
+                        <p>提供主題地圖、教學風格描述與可隨問答自動演進的查詢筆記系統。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>系統提示詞 (SKILL.md)</h4>
+                        <p>定義大模型的語感合約、限制條件、口語字詞與回答的拓撲架構。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Persona Section -->
+            <section id="section-style">
+                <h2>教學語感工程化</h2>
+                <p>專案基於真實課程影片字幕進行字頻分析，將台大李宏毅老師的「教學語感與人格特質」公式化，並約束 AI 的對話節奏：</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>經典習慣詞</th>
+                            <th>對比出現次數</th>
+                            <th>工程化教學用途</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>比如說</strong></td>
+                            <td>609 次</td>
+                            <td>最直覺的舉例引入詞，強制不准使用過於書面的「舉例來說」。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>假設</strong></td>
+                            <td>518 次</td>
+                            <td>用於開啟思想實驗（如「假設你今天想要...」），提高情境感。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>這樣子 / 而已</strong></td>
+                            <td>230 / 160 次</td>
+                            <td>用於句尾軟化與去神祕化，刺破技術過度包裝的泡沫（如「只是聽起來厲害而已」）。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>硬 train 一發</strong></td>
+                            <td>Signature</td>
+                            <td>當模型直接使用端到端 (end-to-end) 暴力訓練時的招牌比喻語。</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="feature-card" style="margin-top: 20px;">
+                    <h4 style="color: var(--accent-blue);">結構化教學 DNA</h4>
+                    <p style="margin-top: 10px; font-size: 0.95rem;">
+                        回答必須嚴格遵守：<strong>直覺先行</strong>（日常類比） ➔ <strong>Black Box 定義</strong>（輸入與輸出） ➔ <strong>開箱解析</strong>（內部注意力機制等） ➔ <strong>陷阱提示與 Debug 視角</strong> ➔ <strong>暖心回顧與收尾</strong>。
+                    </p>
+                </div>
+            </section>
+
+            <!-- Graph Engine Section -->
+            <section id="section-graph">
+                <h2>圖譜與社群偵測</h2>
+                <p>該專案內建輕量級的圖形結構計算引擎，使用 Python 的 NetworkX 與 Louvain 社群演算法處理實體關係：</p>
+                
+                <div class="grid-cards">
+                    <div class="feature-card">
+                        <h4>916 個節點 & 3664 條邊</h4>
+                        <p>包含了影片、概念、主題等多種節點，建立多維度的關聯性。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>邊置信度標籤</h4>
+                        <p>區分 EXTRACTED（正則提取）與 INFERRED（多重影片共同提及的隱性關聯）。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>非向量社群偵測</h4>
+                        <p>基於 Louvain 拓撲稠密度自動聚類出 10 個核心概念群（Speech、ML、Agents 等）。</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <h4 style="margin-bottom: 12px; color: var(--accent-violet);">God Nodes (關鍵概念樞紐)</h4>
+                    <p>代表課程中最核心的主幹道概念，其他無數個概念均與其形成關聯：</p>
+                    <ul>
+                        <li>Ml Fundamentals (Degree 385)</li>
+                        <li>語言模型 (Degree 251)</li>
+                        <li>Llama (Degree 101)</li>
+                        <li>解剖 (Degree 100)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Comparison Section -->
+            <section id="section-rag">
+                <h2>與傳統 RAG 比較</h2>
+                <p>這套系統在概念層次、溯源能力與自我迭代上均優於靜態 Vector RAG：</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>評估維度</th>
+                            <th>傳統 Vector RAG</th>
+                            <th>李宏毅 .skill 專案模式</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>知識關聯</strong></td>
+                            <td>單純靠向量語意相似度，容易丟失宏觀教學路線。</td>
+                            <td>基於 NetworkX 進行 <strong>BFS 拓撲檢索</strong> 與 Shortest Path 概念探路。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>資料可追溯性</strong></td>
+                            <td>僅回傳 chunk，難以定位影片精準秒數。</td>
+                            <td>與課程字幕對齊，精確對應至某堂課的<strong>時間戳記 (Timestamp)</strong>。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>自我演進力</strong></td>
+                            <td>每次問答都是獨立的 Session。</td>
+                            <td>將好的回覆自動編譯成 <code>Query Brief</code> 保存，實現 Wiki 自我演進。</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- CLI Section -->
+            <section id="section-cli">
+                <h2>CLI 工具與指令</h2>
+                <p>透過 <code>hungyi_kb.py</code> 工具，開發者能對知識庫進行同步、搜尋與檢索圖譜：</p>
+                <pre><code># 1. 抓取頻道影片清單
+python3 scripts/hungyi_kb.py sync-metadata
+
+# 2. 下載並快取逐字稿 (以生成式AI相關影片為例)
+python3 scripts/hungyi_kb.py sync-transcripts --title-contains "生成式AI"
+
+# 3. 編譯 Wiki 文件與索引網頁
+python3 scripts/hungyi_kb.py compile
+
+# 4. 關鍵字快速檢索
+python3 scripts/hungyi_kb.py search "attention" --limit 5
+
+# 5. 建立知識圖譜並生成報告
+python3 scripts/hungyi_kb.py graph build
+
+# 6. 向圖譜引擎提問（檢索關聯路徑）
+python3 scripts/hungyi_kb.py graph query "transformer"</code></pre>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <p>分析報告由 <a href="#">Antigravity</a> AI 程式碼編譯助手生成 © 2026</p>
+        </footer>
+    </div>
+
+</body>
+</html>
