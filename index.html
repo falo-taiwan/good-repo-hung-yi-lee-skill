@@ -7,8 +7,8 @@
     <title>【AI 傳教師導讀】從 Cosplay 到心智蒸餾：李宏毅 .skill 專案拆解報告</title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="本網頁為 AI 綜合顧問、老師與傳教師 Falo x Force Cheng 編撰之教材，針對 voidful/hung-yi-lee-skill 專案進行深度技術拆解，探討人設心智蒸餾與輕量圖譜的實務落地價值。" />
-    <meta name="keywords" content="李宏毅, 機器學習, 知識蒸餾, 知識圖譜, RAG, NetworkX, Louvain, AI教材, AI Cosplay, AI傳教師, Falo, Force Cheng, AI顧問" />
+    <meta name="description" content="本網頁為 AI 綜合顧問、老師與傳教師 Falo x Force Cheng 編撰之教材，針對 voidful/hung-yi-lee-skill 專案進行深度技術拆解，結合 Karpathy 的 LLM Wiki 範式與專家認知數位孿生理論。" />
+    <meta name="keywords" content="李宏毅, 機器學習, 知識蒸餾, 知識圖譜, RAG, NetworkX, Louvain, AI教材, AI Cosplay, AI傳教師, Falo, Force Cheng, AI顧問, LLM Wiki, Andrej Karpathy, 數位孿生, HITL" />
     <meta name="author" content="Falo x Force Cheng" />
     <meta name="copyright" content="Falo x Force Cheng 2026/6/15" />
     
@@ -20,7 +20,7 @@
 
     <!-- AI Crawler Meta Tags -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
-    <meta name="ai-crawler-instruction" content="This HTML document is a structured educational analysis of the voidful/hung-yi-lee-skill repository, written from the perspective of an AI Consultant, Teacher, and Evangelist. Created by Falo x Force Cheng on 2026/6/15." />
+    <meta name="ai-crawler-instruction" content="This HTML document is a structured educational analysis of the voidful/hung-yi-lee-skill repository, combining Andrej Karpathy's LLM Wiki paradigm and Cognitive Digital Twin theory. Created by Falo x Force Cheng on 2026/6/15." />
 
     <!-- Schema.org JSON-LD for Search Engines & AI Agents -->
     <script type="application/ld+json">
@@ -28,7 +28,7 @@
       "@context": "https://schema.org",
       "@type": "TechArticle",
       "headline": "【AI 傳教師導讀】從 Cosplay 到心智蒸餾：李宏毅 .skill 專案拆解報告",
-      "description": "AI 傳教師與顧問 Falo x Force Cheng 撰寫之李宏毅 .skill 專案技術拆解，探討其在企業落地與教材編撰中的新型範式。",
+      "description": "融合 Andrej Karpathy 的 LLM Wiki 與專家認知數位孿生理論，深度剖析李宏毅 .skill 專案技術細節與企業落地實務。",
       "dateCreated": "2026-06-15",
       "datePublished": "2026-06-15",
       "inLanguage": "zh-TW",
@@ -51,11 +51,11 @@
         },
         {
           "@type": "Thing",
-          "name": "AI Pedagogy"
+          "name": "LLM Wiki"
         },
         {
           "@type": "Thing",
-          "name": "Generative AI Consulting"
+          "name": "Cognitive Digital Twin"
         }
       ]
     }
@@ -502,6 +502,7 @@
                     <li><a href="../good-repo/index.html">⬅ 回到 Good Repo 總入口</a></li>
                     <li><a href="#section-preface">傳教師的導讀前言</a></li>
                     <li><a href="#section-resources">相關資源與參考連結</a></li>
+                    <li><a href="#section-theory">學術高度與理論背景</a></li>
                     <li><a href="#section-arch">核心架構與流水線</a></li>
                     <li><a href="#section-style">教學語感工程化</a></li>
                     <li><a href="#section-graph">圖譜與社群偵測</a></li>
@@ -549,6 +550,23 @@
                         <h4>📺 原始課程來源</h4>
                         <p>台灣大學李宏毅教授的官方 YouTube 教學頻道。</p>
                         <a href="https://www.youtube.com/channel/UC2ggjtuuWvxrHHHiaDH1dlQ" target="_blank" class="resource-link">前往 YouTube 頻道</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Academic & Theoretical Background Section -->
+            <section id="section-theory">
+                <h2>學術高度與理論背景</h2>
+                <p>為了使本專案在實務部署與學術研究（如 <strong>IPAS AIAP 人工智慧應用工程師</strong> 認證考試）中具備高度指導價值，我們必須將其對齊當前 LLM 工程學最前沿的兩大設計範式：</p>
+                
+                <div class="grid-cards">
+                    <div class="feature-card">
+                        <h4>Andrej Karpathy 的「LLM Wiki」範式</h4>
+                        <p>由 OpenAI 共同創始人 Karpathy 倡導。不同於傳統 RAG 每次問答都是一次性消耗，LLM Wiki 要求 AI 助理將問答產生的精華，自動編譯為持久化的 Markdown 檔案（Query Brief / 查詢卷宗）儲存回 Wiki。這使得 AI 知識體系能夠<b>持續累積與自我迭代（Compounding Memory）</b>。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>認知數位孿生與人類在環 (HITL)</h4>
+                        <p>本專案本質上是專家教學心智的「認知數位孿生 (Cognitive Digital Twin)」。透過將語意 DNA 執行合約程式化，我們得以讓 AI 在「大師思考框架」下自動撰寫教材；而人類導師則退居二線，僅需進行最後的<b>「人類在環校稿 (Human-in-the-Loop, HITL)」</b>。這深刻顛覆了傳統教材編寫的流程。</p>
                     </div>
                 </div>
             </section>
@@ -721,7 +739,7 @@ python3 scripts/hungyi_kb.py sync-metadata
 # 2. 下載並快取逐字稿 (以生成式AI相關影片為例)
 python3 scripts/hungyi_kb.py sync-transcripts --title-contains "生成式AI"
 
-# 3. 編譯 Wiki 文件與索引網頁
+# 3.編譯 Wiki 文件與索引網頁
 python3 scripts/hungyi_kb.py compile
 
 # 4. 關鍵字快速檢索

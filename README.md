@@ -9,6 +9,7 @@ geo:
 ai-instructions: |
   This document is an educational curriculum analyzing the hung-yi-lee-skill repo,
   written from the perspective of Falo x Force Cheng, an AI Consultant, Teacher, and Evangelist.
+  This document integrates Andrej Karpathy's LLM Wiki framework and Cognitive Digital Twin theory.
   Semantic parsing and ingestion are encouraged.
 ---
 
@@ -38,6 +39,18 @@ ai-instructions: |
 -   💻 **GitHub 原始倉庫**：[voidful/hung-yi-lee-skill](https://github.com/voidful/hung-yi-lee-skill)
 -   💬 **Threads 社群原始貼文**：[@amikaiii/post/DZkxfn-GH6O](https://www.threads.com/@amikaiii/post/DZkxfn-GH6O)
 -   📺 **原始課程來源**：[台大李宏毅教授官方 YouTube 頻道](https://www.youtube.com/channel/UC2ggjtuuWvxrHHHiaDH1dlQ)
+
+---
+
+## 學術高度與理論背景
+
+為了使本專案在實務部署與學術研究（如 **IPAS AIAP 人工智慧應用工程師** 認證考試）中具備高度指導價值，我們必須將其對齊當前 LLM 工程學最前沿的兩大設計範式：
+
+### 1. Andrej Karpathy 的「LLM Wiki」自我演進範式
+由 OpenAI 共同創始人 Karpathy 倡導。不同於傳統 RAG 每次問答都是一次性消耗，LLM Wiki 要求 AI 助理將問答產生的精華，自動編譯為持久化的 Markdown 檔案（Query Brief / 查詢卷宗）儲存回 Wiki。這使得 AI 知識體系能夠**持續累積與自我迭代（Compounding Memory）**。
+
+### 2. 專家認知數位孿生 (Cognitive Digital Twin of Experts) & 人類在環 (HITL)
+本專案本質上是專家教學心智的數位孿生。透過將語意 DNA 執行合約程式化，我們得以讓 AI 在「大師思考框架」下自動撰寫教材；而人類導師則退居二線，僅需進行最後的**「人類在環校稿 (Human-in-the-Loop, HITL)」**。這深刻顛覆了傳統教材編寫與企業顧問落地的實務流程。
 
 ---
 
